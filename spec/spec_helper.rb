@@ -1,7 +1,9 @@
+require 'rubygems'
+require 'bundler/setup'
+
 spec_root = File.dirname(__FILE__)
 $:.unshift(File.join(spec_root, '..', 'lib'))
 $:.unshift(spec_root)
-
 require 'net-http-last_modified_cache'
 
 Dir[File.join(spec_root, 'support/**/*.rb')].each { |file| require file }
