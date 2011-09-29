@@ -3,6 +3,7 @@ source 'http://rubygems.org'
 gemspec
 
 group :development do
+  gem 'fakeweb'
   gem 'rspec'
   gem 'guard-rspec'
   if RUBY_PLATFORM =~ /darwin/i # osx
