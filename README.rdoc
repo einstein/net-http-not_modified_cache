@@ -1,0 +1,13 @@
+= net-http-last_modified_cache
+
+[Description]
+
+
+== Installation
+
+  gem install net-http-last_modified_cache
+
+
+== Usage
+
+[Instructions]
