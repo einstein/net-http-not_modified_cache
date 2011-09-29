@@ -1,4 +1,5 @@
 require 'net/http'
 require 'net/http/last_modified_cache'
+require 'net/http/last_modified_cache/version'
 
-Net::HTTP::Request.send(:include, Net::HTTP::LastModifiedCache)
+Net::HTTP.send(:include, Net::HTTP::LastModifiedCache)
