@@ -11,7 +11,7 @@ module Net
         end
 
         def enabled?
-          @enabled ||= enable!
+          @enabled
         end
 
         def included(base)
@@ -21,6 +21,8 @@ module Net
           end
         end
       end
+
+      enable!
 
       def request_with_last_modified_cache(request, body = nil, &block)
         request_without_last_modified_cache(request, body, &block)
