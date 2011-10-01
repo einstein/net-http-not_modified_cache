@@ -9,7 +9,7 @@ module Net
         attr_writer :root, :store
 
         def cacheable_request?(request)
-          request.is_a?(Get)
+          enabled? && request.is_a?(Get)
         end
 
         def disable!

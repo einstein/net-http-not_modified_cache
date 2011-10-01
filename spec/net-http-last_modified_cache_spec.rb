@@ -4,6 +4,13 @@ describe Net::HTTP::LastModifiedCache do
   context '#cacheable_request?' do
     let(:request) { Net::HTTP::Get.allocate }
 
+    it 'should only return true if enabled' do
+      subject.disable!
+      subject.cacheable_request?(request).should be_false
+      subject.enable!
+      subject.cacheable_request?(request).should be_true
+    end
+
     it 'should only return true if request method is a Net::HTTP::Get' do
       subject.cacheable_request?(nil).should be_false
       subject.cacheable_request?(Object.new).should be_false
