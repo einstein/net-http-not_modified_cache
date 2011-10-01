@@ -8,6 +8,10 @@ module Net
       class << self
         attr_writer :root, :store
 
+        def cacheable_request?(request)
+          request.is_a?(Get)
+        end
+
         def disable!
           @enabled = false
         end

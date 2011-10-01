@@ -1,6 +1,17 @@
 require File.expand_path('../spec_helper', __FILE__)
 
 describe Net::HTTP::LastModifiedCache do
+  context '#cacheable_request?' do
+    let(:request) { Net::HTTP::Get.allocate }
+
+    it 'should only return true if request method is a Net::HTTP::Get' do
+      subject.cacheable_request?(nil).should be_false
+      subject.cacheable_request?(Object.new).should be_false
+      subject.cacheable_request?(Net::HTTP::Post.allocate).should be_false
+      subject.cacheable_request?(request).should be_true
+    end
+  end
+
   context '#enabled?' do
     it 'should be toggleable and true by default' do
       subject.enabled?.should be_true
