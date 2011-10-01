@@ -9,7 +9,7 @@ module Net
       end
 
       def request_with_last_modified_cache(request, body = nil, &block)
-        super
+        request_without_last_modified_cache(request, body, &block)
       end
     end
   end
