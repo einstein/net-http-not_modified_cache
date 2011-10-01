@@ -25,4 +25,5 @@ Gem::Specification.new do |s|
   s.test_files = Dir['spec/**/*']
 
   s.add_dependency('activesupport')
+  s.add_dependency('i18n')
 end

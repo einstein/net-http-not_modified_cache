@@ -3,6 +3,7 @@ PATH
   specs:
     net-http-last_modified_cache (0.0.0)
       activesupport
+      i18n
 
 GEM
   remote: http://rubygems.org/
@@ -16,6 +17,7 @@ GEM
       thor (~> 0.14.6)
     guard-rspec (0.4.5)
       guard (>= 0.4.0)
+    i18n (0.6.0)
     multi_json (1.0.3)
     rb-fsevent (0.4.3.1)
     rspec (2.6.0)
