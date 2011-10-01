@@ -11,6 +11,13 @@ describe Net::HTTP::LastModifiedCache do
     end
   end
 
+  context '#entry' do
+    it 'instance should respond to body and last_modified_at' do
+      subject.entry.new.should respond_to(:body)
+      subject.entry.new.should respond_to(:last_modified_at)
+    end
+  end
+
   context '#root' do
     it 'should be /tmp by default' do
       subject.root.should == '/tmp'

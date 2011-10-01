@@ -1,6 +1,10 @@
 module Net
   class HTTP
     module LastModifiedCache
+      def request_with_last_modified_cache(request, body = nil, &block)
+        request_without_last_modified_cache(request, body, &block)
+      end
+
       class << self
         attr_writer :root, :store
 
@@ -14,6 +18,10 @@ module Net
 
         def enabled?
           @enabled
+        end
+
+        def entry
+          @entry ||= Struct.new(:body, :last_modified_at)
         end
 
         def included(base)
@@ -41,10 +49,6 @@ module Net
       end
 
       enable!
-
-      def request_with_last_modified_cache(request, body = nil, &block)
-        request_without_last_modified_cache(request, body, &block)
-      end
     end
   end
 end
