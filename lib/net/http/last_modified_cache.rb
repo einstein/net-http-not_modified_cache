@@ -2,6 +2,8 @@ module Net
   class HTTP
     module LastModifiedCache
       class << self
+        attr_writer :root, :store
+
         def disable!
           @enabled = false
         end
@@ -19,6 +21,14 @@ module Net
             alias_method :request_without_last_modified_cache, :request
             alias_method :request, :request_with_last_modified_cache
           end
+        end
+
+        def root
+          @root ||= '/tmp'
+        end
+
+        def store
+          @store ||= ActiveSupport::Cache.lookup_store(:file_store, root, :compress => true)
         end
       end
 
