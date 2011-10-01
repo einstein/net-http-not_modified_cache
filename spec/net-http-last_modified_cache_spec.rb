@@ -52,6 +52,12 @@ describe Net::HTTP::LastModifiedCache do
     end
   end
 
+  context '#version' do
+    it 'should return a version string' do
+      subject.version.should match(/^\d+\.\d+\.\d+(\.[^\.]+)?$/)
+    end
+  end
+
   context '#with_store' do
     let(:store) { ActiveSupport::Cache.lookup_store(:file_store, '/tmp/test') }
 

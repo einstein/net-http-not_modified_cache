@@ -1,3 +1,5 @@
+require 'net/http'
+
 module Net
   class HTTP
     module LastModifiedCache
@@ -41,6 +43,10 @@ module Net
 
         def store
           @store ||= ActiveSupport::Cache.lookup_store(:file_store, root, :compress => true)
+        end
+
+        def version
+          @version ||= '0.0.0'
         end
 
         def with_store(store)
