@@ -26,4 +26,14 @@ describe Net::HTTP::LastModifiedCache do
       puts subject.store.cache_path.should == subject.root
     end
   end
+
+  context '#with_store' do
+    let(:store) { ActiveSupport::Cache.lookup_store(:file_store, '/tmp/test') }
+
+    it 'should switch lookup store when yielding' do
+      current_store = subject.store
+      subject.with_store(store) { subject.store.should_not == current_store }
+      subject.store.should == current_store
+    end
+  end
 end

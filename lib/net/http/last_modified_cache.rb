@@ -30,6 +30,14 @@ module Net
         def store
           @store ||= ActiveSupport::Cache.lookup_store(:file_store, root, :compress => true)
         end
+
+        def with_store(store)
+          old_store = self.store
+          self.store = store
+          yield
+        ensure
+          self.store = old_store
+        end
       end
 
       enable!
