@@ -30,7 +30,7 @@ describe Net::HTTP::LastModifiedCache do
     end
 
     it 'should use root as cache root' do
-      puts subject.store.cache_path.should == subject.root
+      subject.store.cache_path.should == subject.root
     end
   end
 
