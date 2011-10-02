@@ -60,6 +60,22 @@ module Net
           @version ||= '0.0.0'
         end
 
+        def while_disabled(&block)
+          while_enabled_is(false, &block)
+        end
+
+        def while_enabled(&block)
+          while_enabled_is(true, &block)
+        end
+
+        def while_enabled_is(boolean)
+          old_enabled = @enabled
+          @enabled = boolean
+          yield
+        ensure
+          @enabled = old_enabled
+        end
+
         def with_store(store)
           old_store = self.store
           self.store = store

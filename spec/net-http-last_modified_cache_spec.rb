@@ -1,6 +1,8 @@
 require File.expand_path('../spec_helper', __FILE__)
 
 describe Net::HTTP::LastModifiedCache do
+  before { subject.enable! }
+
   context '#cacheable_request?' do
     let(:request) { Net::HTTP::Get.allocate }
 
@@ -73,6 +75,32 @@ describe Net::HTTP::LastModifiedCache do
   context '#version' do
     it 'should return a version string' do
       subject.version.should match(/^\d+\.\d+\.\d+(\.[^\.]+)?$/)
+    end
+  end
+
+  context '#while_disabled' do
+    it 'should set enabled? to false for the duration of the block' do
+      subject.while_disabled { subject.enabled?.should be_false }
+      subject.enabled?.should be_true
+    end
+  end
+
+  context '#while_enabled' do
+    it 'should set enabled? to true for the duration of the block' do
+      subject.disable!
+      subject.while_enabled { subject.enabled?.should be_true }
+      subject.enabled?.should be_false
+    end
+  end
+
+  context '#while_enabled_is' do
+    it 'should set enabled? and return it back to its previous value after evaluating the block' do
+      subject.while_enabled_is(false) { subject.enabled?.should be_false }
+      subject.enabled?.should be_true
+
+      subject.disable!
+      subject.while_enabled_is(true) { subject.enabled?.should be_true }
+      subject.enabled?.should be_false
     end
   end
 
