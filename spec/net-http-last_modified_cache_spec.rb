@@ -19,6 +19,25 @@ describe Net::HTTP::LastModifiedCache do
     end
   end
 
+  context '#cacheable_response?' do
+    let(:found_response) { response.dup.tap { |response| response.stub!(:code).and_return('200') } }
+    let(:not_modified_response) { response.dup.tap { |response| response.stub!(:code).and_return('304') } }
+    let(:response) { Net::HTTPResponse.allocate }
+
+    it 'should only return true if enabled' do
+      subject.disable!
+      subject.cacheable_response?(found_response).should be_false
+      subject.enable!
+      subject.cacheable_response?(found_response).should be_true
+    end
+
+    it 'should only return true if response code is a 200 or 304' do
+      subject.cacheable_response?(response).should be_false
+      subject.cacheable_response?(found_response).should be_true
+      subject.cacheable_response?(not_modified_response).should be_true
+    end
+  end
+
   context '#enabled?' do
     it 'should be toggleable and true by default' do
       subject.enabled?.should be_true
@@ -29,11 +48,10 @@ describe Net::HTTP::LastModifiedCache do
     end
   end
 
-  context '#entry' do
-    it 'instance should respond to body and last_modified_at' do
-      subject.entry.new.should respond_to(:body)
-      subject.entry.new.should respond_to(:last_modified_at)
-    end
+  context '#process_request!' do
+  end
+
+  context '#process_response!' do
   end
 
   context '#root' do
@@ -65,6 +83,13 @@ describe Net::HTTP::LastModifiedCache do
       current_store = subject.store
       subject.with_store(store) { subject.store.should_not == current_store }
       subject.store.should == current_store
+    end
+  end
+
+  context '::Entry' do
+    it 'instance should respond to body and last_modified_at' do
+      subject::Entry.new.should respond_to(:body)
+      subject::Entry.new.should respond_to(:last_modified_at)
     end
   end
 end
