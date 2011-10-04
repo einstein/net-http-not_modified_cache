@@ -1,7 +1,6 @@
-= net-http-not_modified_cache
+= net-http-not_modified_cache - {<img src="http://travis-ci.org/einstein/net-http-not_modified_cache.png" />}[http://travis-ci.org/einstein/net-http-not_modified_cache]
 
-[Description]
-
+Description
 
 == Installation
 
@@ -10,4 +9,4 @@
 
 == Usage
 
-[Instructions]
+Instructions
