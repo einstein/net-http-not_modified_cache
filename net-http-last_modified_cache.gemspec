@@ -3,12 +3,11 @@
 lib = File.expand_path('../lib/', __FILE__)
 $:.unshift lib unless $:.include?(lib)
 
-require 'net/http/last_modified_cache'
 require 'date'
 
 Gem::Specification.new do |s|
   s.name     = 'net-http-last_modified_cache'
-  s.version  = Net::HTTP::LastModifiedCache.version
+  s.version  = '0.0.0'
   s.date     = Date.today
   s.platform = Gem::Platform::RUBY
 
