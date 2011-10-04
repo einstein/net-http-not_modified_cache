@@ -31,6 +31,13 @@ describe Net::HTTP::NotModifiedCache do
         subject.cache_entry(stubbed_response).body.should == stubbed_response.body
       end
 
+      it 'should set etag header if it exists' do
+        subject.cache_entry(stubbed_response).etag.should be_nil
+
+        stubbed_response['etag'] = 'test'
+        subject.cache_entry(stubbed_response).etag.should == 'test'
+      end
+
       it 'should set last_modified_at to last-modified header if it exists' do
         time = Time.now - 100
         stubbed_response['last-modified'] = time.httpdate
@@ -66,6 +73,8 @@ describe Net::HTTP::NotModifiedCache do
     end
 
     context '#cache_request!' do
+      it 'should add etag header if cached entry exists'
+      it 'should not modify etag header if it already exists'
       it 'should add last-modified header if cached entry exists'
       it "should not add last-modified header if cached entry doesn't exist"
       it 'should not modify last-modified header if it already exists'
@@ -191,8 +200,9 @@ describe Net::HTTP::NotModifiedCache do
   context '::Entry' do
     subject { lmc::Entry.new }
 
-    it 'should respond to body and last_modified_at' do
+    it 'should respond to :body, :etag, and :last_modified_at' do
       subject.should respond_to(:body)
+      subject.should respond_to(:etag)
       subject.should respond_to(:last_modified_at)
     end
   end

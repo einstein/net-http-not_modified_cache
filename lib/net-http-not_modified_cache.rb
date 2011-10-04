@@ -8,7 +8,7 @@ module Net
     module NotModifiedCache
       def cache_entry(response)
         last_modified_at = Time.parse(response['last-modified'] || response['date']) rescue Time.now
-        Entry.new(response.body, last_modified_at)
+        Entry.new(response.body, response['etag'], last_modified_at)
       end
 
       def cache_key(request)
@@ -106,7 +106,7 @@ module Net
 
       enable!
 
-      class Entry < Struct.new(:body, :last_modified_at)
+      class Entry < Struct.new(:body, :etag, :last_modified_at)
       end
     end
   end
