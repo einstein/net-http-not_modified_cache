@@ -1,4 +1,4 @@
-= net-http-not_modified_cache - {<img src="https://travis-ci.org/einstein/net-http-not_modified_cache.png" />}[http://travis-ci.org/einstein/net-http-not_modified_cache]
+= net-http-not_modified_cache - {<img src="https://secure.travis-ci.org/einstein/net-http-not_modified_cache.png" />}[http://travis-ci.org/einstein/net-http-not_modified_cache]
 
 Description
 
