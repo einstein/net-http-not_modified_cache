@@ -20,6 +20,12 @@ module Net
       end
 
       def cache_request!(request, key)
+        unless request['etag'] || request['if-modified-since']
+          if entry = NotModifiedCache.store.read(key)
+            request['etag'] = entry.etag
+            request['if-modified-since'] = entry.last_modified_at.httpdate
+          end
+        end
       end
 
       def cacheable_request?(request)

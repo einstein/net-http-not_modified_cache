@@ -83,11 +83,34 @@ describe Net::HTTP::NotModifiedCache do
     end
 
     context '#cache_request!' do
-      it 'should add etag header if cached entry exists'
-      it 'should not modify etag header if it already exists'
-      it 'should add last-modified header if cached entry exists'
-      it "should not add last-modified header if cached entry doesn't exist"
-      it 'should not modify last-modified header if it already exists'
+      it 'should not add etag or if-modified-since header if either already exists' do
+        nmc.store.should_not_receive(:read)
+
+        request['etag'] = 'etag'
+        subject.cache_request!(request, key)
+
+        request['etag'] = nil
+        request['if-modified-since'] = Time.now.httpdate
+        subject.cache_request!(request, key)
+      end
+
+      it 'should search for cached entry' do
+        nmc.store.should_receive(:read)
+        subject.cache_request!(request, key)
+      end
+
+      it 'should not raise exception if cached entry does not exist' do
+        subject.cache_request!(request, 'missing-entry')
+      end
+
+      it 'should set etag and if-modified-since headers' do
+        entry = nmc::Entry.new('testing', 'test', Time.now)
+        nmc.store.should_receive(:read).with(key).and_return(entry)
+        subject.cache_request!(request, key)
+
+        request['etag'].should == entry.etag
+        request['if-modified-since'].should == entry.last_modified_at.httpdate
+      end
     end
 
     context '#cacheable_request?' do
