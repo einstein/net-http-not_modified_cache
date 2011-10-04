@@ -6,7 +6,7 @@ $:.unshift lib unless $:.include?(lib)
 require 'date'
 
 Gem::Specification.new do |s|
-  s.name     = 'net-http-last_modified_cache'
+  s.name     = 'net-http-not_modified_cache'
   s.version  = '0.0.0'
   s.date     = Date.today
   s.platform = Gem::Platform::RUBY
@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
 
   s.author   = 'Sean Huber'
   s.email    = 'shuber@einsteinindustries.com'
-  s.homepage = 'http://github.com/einstein/net-http-last_modified_cache'
+  s.homepage = 'http://github.com/einstein/net-http-not_modified_cache'
 
   s.require_paths = ['lib']
 

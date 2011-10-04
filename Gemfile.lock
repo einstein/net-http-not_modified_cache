@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    net-http-last_modified_cache (0.0.0)
+    net-http-not_modified_cache (0.0.0)
       activesupport
       i18n
       rack
@@ -40,7 +40,7 @@ DEPENDENCIES
   fakeweb
   growl
   guard-rspec
-  net-http-last_modified_cache!
+  net-http-not_modified_cache!
   rb-fsevent
   rspec
   timecop

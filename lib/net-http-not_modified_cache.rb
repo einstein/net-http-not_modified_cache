@@ -5,7 +5,7 @@ require 'time'
 
 module Net
   class HTTP
-    module LastModifiedCache
+    module NotModifiedCache
       def cache_entry(response)
         last_modified_at = Time.parse(response['last-modified'] || response['date']) rescue Time.now
         Entry.new(response.body, last_modified_at)
@@ -23,7 +23,7 @@ module Net
       end
 
       def cacheable_request?(request)
-        LastModifiedCache.enabled? && request.is_a?(Get)
+        NotModifiedCache.enabled? && request.is_a?(Get)
       end
 
       def cache_response(response, key)
@@ -34,13 +34,13 @@ module Net
       end
 
       def cacheable_response?(response)
-        LastModifiedCache.enabled? && %w(200 304).include?(response.code)
+        NotModifiedCache.enabled? && %w(200 304).include?(response.code)
       end
 
-      def request_with_last_modified_cache(request, body = nil, &block)
+      def request_with_not_modified_cache(request, body = nil, &block)
         key = cache_key(request)
         cache_request(request, key)
-        response = request_without_last_modified_cache(request, body, &block)
+        response = request_without_not_modified_cache(request, body, &block)
         cache_response(response, key)
         response
       end
@@ -62,13 +62,13 @@ module Net
 
         def included(base)
           base.class_eval do
-            alias_method :request_without_last_modified_cache, :request
-            alias_method :request, :request_with_last_modified_cache
+            alias_method :request_without_not_modified_cache, :request
+            alias_method :request, :request_with_not_modified_cache
           end
         end
 
         def root
-          @root ||= '/tmp/net-http-last_modified_cache'
+          @root ||= '/tmp/net-http-not_modified_cache'
         end
 
         def store
@@ -112,4 +112,4 @@ module Net
   end
 end
 
-Net::HTTP.send(:include, Net::HTTP::LastModifiedCache)
+Net::HTTP.send(:include, Net::HTTP::NotModifiedCache)

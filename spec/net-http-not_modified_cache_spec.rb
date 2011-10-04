@@ -1,7 +1,7 @@
 require File.expand_path('../spec_helper', __FILE__)
 
-describe Net::HTTP::LastModifiedCache do
-  let(:lmc) { Net::HTTP::LastModifiedCache }
+describe Net::HTTP::NotModifiedCache do
+  let(:lmc) { Net::HTTP::NotModifiedCache }
 
   context 'when included in Net::HTTP' do
     subject { Net::HTTP.new(url.host) }
@@ -115,7 +115,7 @@ describe Net::HTTP::LastModifiedCache do
       end
     end
 
-    context '#request_with_last_modified_cache' do
+    context '#request_with_not_modified_cache' do
       it 'should run fakeweb tests'
     end
   end
@@ -131,8 +131,8 @@ describe Net::HTTP::LastModifiedCache do
   end
 
   context '.root' do
-    it 'should be /tmp/net-http-last_modified_cache by default' do
-      subject.root.should == '/tmp/net-http-last_modified_cache'
+    it 'should be /tmp/net-http-not_modified_cache by default' do
+      subject.root.should == '/tmp/net-http-not_modified_cache'
     end
   end
 

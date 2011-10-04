@@ -1,11 +1,11 @@
-= net-http-last_modified_cache
+= net-http-not_modified_cache
 
 [Description]
 
 
 == Installation
 
-  gem install net-http-last_modified_cache
+  gem install net-http-not_modified_cache
 
 
 == Usage
