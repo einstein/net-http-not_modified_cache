@@ -4,6 +4,7 @@ gemspec
 
 group :development do
   gem 'fakeweb'
+  gem 'rake'
   gem 'rspec'
   gem 'guard-rspec'
   gem 'timecop'
