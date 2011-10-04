@@ -31,6 +31,11 @@ module Net
       end
 
       def cache_response!(response, key)
+        if response.code == '200'
+          NotModifiedCache.store.write(key, cache_entry(response))
+        elsif response.code == '304' && entry = NotModifiedCache.store.read(key)
+          response.body = entry.body
+        end
       end
 
       def cacheable_response?(response)

@@ -1,58 +1,68 @@
 require File.expand_path('../spec_helper', __FILE__)
 
 describe Net::HTTP::NotModifiedCache do
-  let(:lmc) { Net::HTTP::NotModifiedCache }
+  let(:nmc) { Net::HTTP::NotModifiedCache }
 
   context 'when included in Net::HTTP' do
     subject { Net::HTTP.new(url.host) }
 
-    let(:found) { response.dup.tap { |response| response.stub!(:code).and_return('200') } }
-    let(:not_modified) { response.dup.tap { |response| response.stub!(:code).and_return('304') } }
-    let(:response) { Net::HTTPResponse.allocate }
+    let(:found) do
+      instance = response.dup
+      instance.body = 'test'
+      instance.stub!(:code).and_return('200')
+      instance
+    end
+    let(:not_modified) do
+      instance = response.dup
+      instance.stub!(:code).and_return('304')
+      instance
+    end
+    let(:response) do
+      instance = Net::HTTPResponse.allocate
+      instance.body = ''
+      instance.instance_variable_set('@header', {})
+      instance.instance_variable_set('@read', true)
+      instance
+    end
 
     let(:get) { Net::HTTP::Get.allocate }
     let(:post) { Net::HTTP::Post.allocate }
     let(:request) { Net::HTTP::Get.new(url.path) }
+
+    let(:key) { subject.cache_key(get) }
     let(:url) { URI.parse('http://fakeweb.test/index.html') }
 
     context '#cache_entry' do
-      let(:stubbed_response) do
-        found.tap do |response|
-          response.stub!(:body).and_return('test')
-          response.instance_variable_set('@header', {})
-        end
-      end
-
       it 'should return an Entry instance' do
-        subject.cache_entry(stubbed_response).should be_an_instance_of(lmc::Entry)
+        subject.cache_entry(found).should be_an_instance_of(nmc::Entry)
       end
 
       it 'should set body to the response body' do
-        subject.cache_entry(stubbed_response).body.should == stubbed_response.body
+        subject.cache_entry(found).body.should == found.body
       end
 
       it 'should set etag header if it exists' do
-        subject.cache_entry(stubbed_response).etag.should be_nil
+        subject.cache_entry(found).etag.should be_nil
 
-        stubbed_response['etag'] = 'test'
-        subject.cache_entry(stubbed_response).etag.should == 'test'
+        found['etag'] = 'test'
+        subject.cache_entry(found).etag.should == 'test'
       end
 
       it 'should set last_modified_at to last-modified header if it exists' do
         time = Time.now - 100
-        stubbed_response['last-modified'] = time.httpdate
-        stubbed_response['date'] = (time - 100).httpdate
-        subject.cache_entry(stubbed_response).last_modified_at.httpdate.should == time.httpdate
+        found['last-modified'] = time.httpdate
+        found['date'] = (time - 100).httpdate
+        subject.cache_entry(found).last_modified_at.httpdate.should == time.httpdate
       end
 
       it 'should set last_modified_at to date header if it exists and last-modified header is not specified' do
         time = Time.now - 200
-        stubbed_response['date'] = time.httpdate
-        subject.cache_entry(stubbed_response).last_modified_at.httpdate.should == time.httpdate
+        found['date'] = time.httpdate
+        subject.cache_entry(found).last_modified_at.httpdate.should == time.httpdate
       end
 
       it 'should set last_modified_at to Time.now if both last-modified and date headers are not specified' do
-        Timecop.freeze(Time.now - 500) { subject.cache_entry(stubbed_response).last_modified_at.httpdate.should == Time.now.httpdate }
+        Timecop.freeze(Time.now - 500) { subject.cache_entry(found).last_modified_at.httpdate.should == Time.now.httpdate }
       end
     end
 
@@ -82,9 +92,9 @@ describe Net::HTTP::NotModifiedCache do
 
     context '#cacheable_request?' do
       it 'should only return true if enabled' do
-        lmc.disable!
+        nmc.disable!
         subject.cacheable_request?(get).should be_false
-        lmc.enable!
+        nmc.enable!
         subject.cacheable_request?(get).should be_true
       end
 
@@ -105,15 +115,24 @@ describe Net::HTTP::NotModifiedCache do
     end
 
     context '#cache_response!' do
-      it 'should cache body if response is a 200'
-      it 'should set cached body if response is a 304'
+      it 'should cache entry if response is a 200' do
+        nmc.store.should_receive(:write)
+        subject.cache_response!(found, key)
+      end
+
+      it 'should set cached body if response is a 304' do
+        entry = nmc::Entry.new('testing', nil, Time.now)
+        nmc.store.should_receive(:read).with(key).and_return(entry)
+        subject.cache_response!(not_modified, key)
+        not_modified.body.should == entry.body
+      end
     end
 
     context '#cacheable_response?' do
       it 'should only return true if enabled' do
-        lmc.disable!
+        nmc.disable!
         subject.cacheable_response?(found).should be_false
-        lmc.enable!
+        nmc.enable!
         subject.cacheable_response?(found).should be_true
       end
 
@@ -198,7 +217,7 @@ describe Net::HTTP::NotModifiedCache do
   end
 
   context '::Entry' do
-    subject { lmc::Entry.new }
+    subject { nmc::Entry.new }
 
     it 'should respond to :body, :etag, and :last_modified_at' do
       subject.should respond_to(:body)
