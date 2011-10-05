@@ -40,7 +40,7 @@ module Net
         if response.code == '200'
           NotModifiedCache.store.write(key, cache_entry(response))
         elsif response.code == '304' && entry = NotModifiedCache.store.read(key)
-          response.body = entry.body
+          response.instance_variable_set('@body', entry.body)
         end
       end
 
