@@ -20,10 +20,10 @@ module Net
       end
 
       def cache_request!(request, key)
-        unless request['etag'] || request['if-modified-since']
+        unless request['if-modified-since'] || request['if-none-match']
           if entry = NotModifiedCache.store.read(key)
-            request['etag'] = entry.etag
             request['if-modified-since'] = entry.last_modified_at.httpdate
+            request['if-none-match'] = entry.etag
           end
         end
       end

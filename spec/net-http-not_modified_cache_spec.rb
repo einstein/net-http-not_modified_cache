@@ -83,13 +83,13 @@ describe Net::HTTP::NotModifiedCache do
     end
 
     context '#cache_request!' do
-      it 'should not add etag or if-modified-since header if either already exists' do
+      it 'should not add if-modified-since or if-none-match header if either already exists' do
         nmc.store.should_not_receive(:read)
 
-        request['etag'] = 'etag'
+        request['if-none-match'] = 'etag'
         subject.cache_request!(request, key)
 
-        request['etag'] = nil
+        request['if-none-match'] = nil
         request['if-modified-since'] = Time.now.httpdate
         subject.cache_request!(request, key)
       end
@@ -108,7 +108,7 @@ describe Net::HTTP::NotModifiedCache do
         nmc.store.should_receive(:read).with(key).and_return(entry)
         subject.cache_request!(request, key)
 
-        request['etag'].should == entry.etag
+        request['if-none-match'].should == entry.etag
         request['if-modified-since'].should == entry.last_modified_at.httpdate
       end
     end
