@@ -8,7 +8,7 @@ describe Net::HTTP::NotModifiedCache do
 
     let(:found) do
       instance = response.dup
-      instance.body = 'test'
+      instance.instance_variable_set('@body', 'test')
       instance.stub!(:code).and_return('200')
       instance
     end
@@ -19,7 +19,7 @@ describe Net::HTTP::NotModifiedCache do
     end
     let(:response) do
       instance = Net::HTTPResponse.allocate
-      instance.body = ''
+      instance.instance_variable_set('@body', '')
       instance.instance_variable_set('@header', {})
       instance.instance_variable_set('@read', true)
       instance
