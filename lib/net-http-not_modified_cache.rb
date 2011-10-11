@@ -15,17 +15,19 @@ module Net
         [address, request.path].join
       end
 
-      def cache_request(request, key)
-        cache_request!(request, key) if cacheable_request?(request)
+      def cache_request(request)
+        cache_request!(request) if cacheable_request?(request)
       end
 
-      def cache_request!(request, key)
+      def cache_request!(request)
+        key = cache_key(request)
         unless request['if-modified-since'] || request['if-none-match']
           if entry = NotModifiedCache.store.read(key)
             request['if-modified-since'] = entry.last_modified_at.httpdate
             request['if-none-match'] = entry.etag
           end
         end
+        key
       end
 
       def cacheable_request?(request)
@@ -49,10 +51,9 @@ module Net
       end
 
       def request_with_not_modified_cache(request, body = nil, &block)
-        key = cache_key(request)
-        cache_request(request, key)
+        key = cache_request(request)
         response = request_without_not_modified_cache(request, body, &block)
-        cache_response(response, key)
+        cache_response(response, key) if key
         response
       end
 

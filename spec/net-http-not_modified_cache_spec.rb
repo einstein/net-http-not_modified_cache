@@ -75,10 +75,10 @@ describe Net::HTTP::NotModifiedCache do
     context '#cache_request' do
       it 'should only call #cache_request! if request is cacheable' do
         subject.should_receive(:cache_request!)
-        subject.cache_request(get, 'test')
+        subject.cache_request(get)
 
         subject.should_not_receive(:cache_request!)
-        subject.cache_request(post, 'test')
+        subject.cache_request(post)
       end
     end
 
@@ -87,26 +87,22 @@ describe Net::HTTP::NotModifiedCache do
         nmc.store.should_not_receive(:read)
 
         request['if-none-match'] = 'etag'
-        subject.cache_request!(request, key)
+        subject.cache_request!(request)
 
         request['if-none-match'] = nil
         request['if-modified-since'] = Time.now.httpdate
-        subject.cache_request!(request, key)
+        subject.cache_request!(request)
       end
 
       it 'should search for cached entry' do
         nmc.store.should_receive(:read)
-        subject.cache_request!(request, key)
-      end
-
-      it 'should not raise exception if cached entry does not exist' do
-        subject.cache_request!(request, 'missing-entry')
+        subject.cache_request!(request)
       end
 
       it 'should set etag and if-modified-since headers' do
         entry = nmc::Entry.new('testing', 'test', Time.now)
-        nmc.store.should_receive(:read).with(key).and_return(entry)
-        subject.cache_request!(request, key)
+        nmc.store.should_receive(:read).with(subject.cache_key(request)).and_return(entry)
+        subject.cache_request!(request)
 
         request['if-none-match'].should == entry.etag
         request['if-modified-since'].should == entry.last_modified_at.httpdate
@@ -128,6 +124,12 @@ describe Net::HTTP::NotModifiedCache do
     end
 
     context '#cache_response' do
+      it 'should only be called if request is cacheable' do
+        subject.stub(:request_without_not_modified_cache)
+        subject.should_not_receive(:cache_response)
+        subject.request(post)
+      end
+
       it 'should only call #cache_response! if response is cacheable' do
         subject.should_receive(:cache_response!)
         subject.cache_response(found, 'test')
