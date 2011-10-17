@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.date     = Date.today
   s.platform = Gem::Platform::RUBY
 
-  s.summary     = 'Summary'
-  s.description = 'Description'
+  s.summary     = 'Caches responses for requests that respond with "304 - Not Modified"'
+  s.description = 'Caches responses for requests that respond with "304 - Not Modified" and adds "if-modified-since" or "if-none-match" headers to future requests'
 
   s.author   = 'Sean Huber'
   s.email    = 'shuber@einsteinindustries.com'
